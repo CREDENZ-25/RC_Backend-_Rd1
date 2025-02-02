@@ -3,7 +3,6 @@ const db = require('./config/db.js');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
-const Leaderboard = require('./models/leaderboard');
 const cors = require('cors');
 require('dotenv').config();
 const app = express();
@@ -16,9 +15,9 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/login', authRoutes);
-app.use('/leaderboard', leaderboardRoutes);
-// Start the server
+app.use('/leaderboard', leaderboardRoutes);  // Correct way to handle routes
 
+// Start the server
 const start = async () => {
   console.log("Testing the database connection..");
   try {
@@ -28,7 +27,9 @@ const start = async () => {
   } catch (error) {
     console.error("Unable to connect to the database:", error.original);
   }
-}
+};
+
+// Sync database and start server
 db
   .sync()
   .then(() => {
@@ -37,9 +38,5 @@ db
     });
   })
   .catch(err => console.log('Database sync error: ' + err));
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+
 start();
-// Sync database and start server

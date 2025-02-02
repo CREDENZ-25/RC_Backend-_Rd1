@@ -8,14 +8,22 @@ const db = new Sequelize(
   {
     host: process.env.DB_HOST, 
     dialect: 'postgres', 
-    protocol : 'postgres',
-    port: process.env.DB_PORT || 5432, 
+    port: process.env.DB_PORT, 
     logging: false,
   }
 );
-db
-  .authenticate()
-  .then(() => console.log('Database connected...'))
-  .catch(err => console.log('Error: ' + err));
+
+// Test database connection
+const testDB = async () => {
+  try {
+    await db.authenticate();
+    console.log("✅ Database connection successful!");
+  } catch (error) {
+    console.error("❌ Database connection failed:", error);
+  }
+};
+
+testDB();
 
 module.exports = db;
+

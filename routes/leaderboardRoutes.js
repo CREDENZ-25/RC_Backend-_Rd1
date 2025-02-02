@@ -1,5 +1,5 @@
 const express = require('express');
-const { getLeaderboard, addEntry } = require('../controllers/leaderboardController');
+const { getLeaderboard, addEntry } = require('../controllers/leaderboardController.js');
 const router = express.Router();
 
 router.get('/', getLeaderboard);
