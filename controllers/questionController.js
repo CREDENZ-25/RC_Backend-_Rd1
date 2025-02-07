@@ -50,7 +50,7 @@ const getCurrentQuestion = (req, res) => {
 
 const nextQuestion = (req, res) => {
     const user_id = req.user.id; // Extract user ID from authenticated user
-
+    
     if (!userQuestionData[user_id]) {
         return res.status(400).json({ error: 'No initialized questions for this user' });
     }

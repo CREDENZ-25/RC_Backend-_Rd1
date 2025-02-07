@@ -11,6 +11,6 @@ const router = express.Router();
 // Apply authMiddleware to protect all routes
 router.post('/initialize', authMiddleware, initializeQuestions);
 router.get('/current', authMiddleware, getCurrentQuestion);
-router.post('/next', authMiddleware, nextQuestion);
+router.get('/next', authMiddleware, nextQuestion);
 
 module.exports = router;
