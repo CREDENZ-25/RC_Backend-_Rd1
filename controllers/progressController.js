@@ -5,9 +5,9 @@ const { userQuestionData } = require("../controllers/questionController"); // Im
 
 const updateProgress = async (req, res) => {
   try {
-    console.log(req.user)
+    console.log(req.user);
     // const user_id = req.user.id;
-    const { user_id,question_id, user_answer } = req.body;
+    const { user_id, question_id, user_answer } = req.body;
 
     console.log("Received Data:", req.body); // Debugging log
 
@@ -58,7 +58,10 @@ const updateProgress = async (req, res) => {
     if (!start_time) {
       await progress.update({ start_time: new Date() });
     }
-    //ADD max_streak
+
+    // Track max_streak dynamically (not stored in DB)
+    let max_streak = streak;
+
     // Handle attempts and scoring logic
     first_attempt = true; // Reset for the next question
     if (first_attempt) {
@@ -67,6 +70,7 @@ const updateProgress = async (req, res) => {
         streak += 1;
       } else {
         marks -= 2;
+        streak = 0; // Reset streak on incorrect answer
       }
       first_attempt = false;
     } else {
@@ -79,6 +83,9 @@ const updateProgress = async (req, res) => {
       }
     }
 
+    // Update max_streak dynamically without storing it
+    max_streak = Math.max(max_streak, streak);
+
     // Find next question
     const currentIndex = question_array.indexOf(parsedQuestionId);
     let next_question_id = null;
@@ -86,7 +93,7 @@ const updateProgress = async (req, res) => {
       next_question_id = question_array[currentIndex + 1];
     }
 
-    // Update progress
+    // Update progress (without saving max_streak)
     await progress.update({
       first_attempt,
       marks,
@@ -99,6 +106,7 @@ const updateProgress = async (req, res) => {
       is_correct,
       marks,
       streak,
+      max_streak, // Sent in response but NOT stored in DB
       next_question_id,
     });
 
