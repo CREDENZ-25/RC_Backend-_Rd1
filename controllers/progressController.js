@@ -48,23 +48,20 @@ const updateProgress = async (req, res) => {
         start_time: new Date(), // Set start_time when user starts for the first time
         marks: 0,
         streak: 0,
+        max_streak: 0, // Initialize max_streak
         first_attempt: true,
       });
     }
 
-    let { marks, streak, first_attempt, question_array, current_question_id, start_time } = progress;
+    let { marks, streak, max_streak, first_attempt, question_array, current_question_id, start_time } = progress;
 
     // If the user has not started yet, ensure start_time is set
     if (!start_time) {
       await progress.update({ start_time: new Date() });
     }
 
-    // Track max_streak dynamically (not stored in DB)
-    let max_streak = streak;
-
     // Handle attempts and scoring logic
-    first_attempt = true; // Reset for the next question
-    if (first_attempt) {
+    if (first_attempt) { // only for the first question attempt
       if (is_correct) {
         marks += 5;
         streak += 1;
@@ -72,8 +69,8 @@ const updateProgress = async (req, res) => {
         marks -= 2;
         streak = 0; // Reset streak on incorrect answer
       }
-      first_attempt = false;
-    } else {
+      first_attempt = false; // After the first attempt, set first_attempt to false
+    } else { // For subsequent attempts
       if (is_correct) {
         marks += 2;
         streak += 1;
@@ -83,30 +80,36 @@ const updateProgress = async (req, res) => {
       }
     }
 
-    // Update max_streak dynamically without storing it
-    max_streak = Math.max(max_streak, streak);
+    // Update max_streak if the current streak surpasses the previous max_streak
+    if (streak > max_streak) {
+      max_streak = streak;
+    }
 
     // Find next question
     const currentIndex = question_array.indexOf(parsedQuestionId);
     let next_question_id = null;
     if (currentIndex !== -1 && currentIndex < question_array.length - 1) {
       next_question_id = question_array[currentIndex + 1];
+      // Reset first_attempt for the next question
+      first_attempt = true;
     }
 
-    // Update progress (without saving max_streak)
+    // Update progress (including max_streak)
     await progress.update({
       first_attempt,
       marks,
       streak,
+      max_streak, // Persist max_streak in the database
       current_question_id: next_question_id,
     });
 
+    // Ensure max_streak is part of the response
     return res.status(200).json({
       message: "Progress updated",
       is_correct,
       marks,
       streak,
-      max_streak, // Sent in response but NOT stored in DB
+      max_streak, // Include max_streak in the response
       next_question_id,
     });
 

@@ -56,6 +56,10 @@ const Progress = db.define('Progress', {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
+  max_streak: {  // Added this line to store max_streak in the DB
+    type: DataTypes.INTEGER,
+    defaultValue: 0, // Default value for max_streak is 0
+  },
 }, {
   freezeTableName: true,  
   timestamps: true,
