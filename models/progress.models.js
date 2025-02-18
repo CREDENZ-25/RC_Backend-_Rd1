@@ -1,61 +1,74 @@
-const { DataTypes } = require('sequelize');
-const db = require('../config/db');
-const UserModel = require('./UserModel'); 
-const Question = require('./Question'); 
-
-const Progress = db.define('Progress', {
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../config/db.js");
+const  User  = require("./user.models.js")
+ 
+const Progress = sequelize.define('Progress', {
   progress_id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,  
   },
   user_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: false,
     references: {
-      model: UserModel,  
-      key: 'user_id',
+      model: User,  
+      key: 'userid',
     },
     onDelete: 'CASCADE',  
   },
   question_array: {
-    type: DataTypes.JSON,  
+    type: DataTypes.ARRAY(DataTypes.INTEGER),  
     allowNull: false,
     defaultValue: [],  
   },
-  current_question_id: {
+  correct_question_count: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+    allowNull: false
+  },
+  counter: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
   start_time: {
     type: DataTypes.DATE,
-    allowNull: true, // Will be null until a question is started
+    allowNull: true,
+  },
+  end_time: {
+    type: DataTypes.DATE,
+    allowNull: true
   },
   first_attempt: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
     allowNull: false,
   },
+  second_attempt: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+    allowNull: true
+  },
   marks: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
-  lifeline_1: {
+  double: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    defaultValue: null,
   },
-  lifeline_2: {
+  skip: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    defaultValue: null,
   },
-  lifeline_3: {
+  freeze: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false,
+    defaultValue: null,
   },
   streak: {
     type: DataTypes.INTEGER,
-    defaultValue: 0,
-  },
+    defaultValue: 0
+  }
 }, {
   freezeTableName: true,  
   timestamps: true,

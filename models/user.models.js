@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const { sequelize } = require("../config/db");
+const { sequelize } = require("../config/db.js");
 
 const User = sequelize.define('User', {
   userid: {
@@ -28,12 +28,12 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  isJunior: {
+  is_junior: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
     allowNull: false,
   },
-  finalResult: {
+  final_result: {
     type: DataTypes.INTEGER,
     allowNull: true,
     defaultValue: 0,
