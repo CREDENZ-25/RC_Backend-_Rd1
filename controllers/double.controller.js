@@ -48,7 +48,7 @@ const doubleController = async (req, res) => {
 
         const timeLeft = currentUserProgress.end_time - Date.now();
         if (timeLeft <= 0) {
-            return res.status(400).json({ "message": "Time Up" });
+            return res.status(200).json({ message: "🎉 You've successfully solved all the challenges", question: null, timeLeft })
         }
 
         let { counter, marks, question_array, first_attempt, second_attempt, correct_question_count } = currentUserProgress;
@@ -86,7 +86,7 @@ const doubleController = async (req, res) => {
                         { marks: marks + 10, correct_question_count, streak: 0},
                         { where: { user_id: currentUserId } }
                     );
-                    return res.status(204).json({ message: "Contest Ended!", question: null, timeLeft })
+                    return res.status(200).json({ message: "🎉 You've successfully solved all the challenges", question: null, timeLeft })
                 }
                 const nextQuestionId = question_array[counter];
                 const nextQuestion = await Question.findOne({
