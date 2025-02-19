@@ -44,8 +44,6 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - rc-network
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d rc_db"]
@@ -71,8 +69,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - rc-network
     restart: always
 
   nginx:
@@ -95,5 +91,3 @@ volumes:
   postgres_data:
   letsencrypt:
   certbot_challenges:
-networks:
-  rc-network:
