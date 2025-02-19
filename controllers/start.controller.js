@@ -3,7 +3,6 @@ const Progress = require('../models/progress.models.js');
 const User = require('../models/user.models.js');
 
 const startController = async (req, res) => {
-  console.log("hello")
   const currentUserId = req.user.id;
   try {
 
@@ -16,8 +15,6 @@ const startController = async (req, res) => {
       return res.status(404).json({ "message": "No questions found" })
     }
 
-    console.log("Hello")
-
     const duration = 30 * 60 * 1000;
     const start_time = Date.now();
     const end_time = start_time + duration;
@@ -26,7 +23,6 @@ const startController = async (req, res) => {
     const existingProgress = await Progress.findOne({ where: { user_id: currentUserId } });
 
     if (existingProgress) {
-      console.log("Hello")
       const counter = existingProgress.counter;
       const QuestionId = existingProgress.question_array[counter];
       const existingProgressFirstQuestion = await Question.findOne({ where: { question_id: QuestionId }, attributes: { exclude: ['answer'] } });
@@ -35,9 +31,10 @@ const startController = async (req, res) => {
       const freezeStatus = existingProgress.freeze;
       const skipStatus = existingProgress.skip;
       const marks = existingProgress.marks;
-      return res.status(200).json({ question: existingProgressFirstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks});
+      const streak = existingProgress.streak;
+      return res.status(200).json({ question: existingProgressFirstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks, streak});
     }
-    console.log("Hello")
+
     const progress = await Progress.create({ user_id: currentUserId, counter: 0, start_time: start_time, end_time: end_time, question_array: shuffledQuestions });
     const firstQuestion = await Question.findOne({
       where: { question_id: shuffledQuestions[0] },
@@ -48,7 +45,7 @@ const startController = async (req, res) => {
     const freezeStatus = progress.freeze;
     const skipStatus = progress.skip;
 
-    return res.status(200).json({ question: firstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks: 0 });
+    return res.status(200).json({ question: firstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks: 0, streak: 0});
 
   } catch (error) {
     console.log(error);
