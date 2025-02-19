@@ -61,7 +61,7 @@ const skipController = async (req, res) => {
     const freezeStatus = freezell;
     const nextQuestionId = questionArray[counter];
     const nextQuestion = await Question.findOne({ where: { question_id: nextQuestionId }, attributes: { exclude: ['answer'] } });
-    return res.status(200).json({ message: "Skip lifeline used successfully", nextQuestion, timeLeft, doubleStatus, skipStatus, freezeStatus });
+    return res.status(200).json({ message: "Skip lifeline used successfully", nextQuestion, timeLeft, doubleStatus, skipStatus, freezeStatus, marks: marks });
 
   } catch (error) {
     console.log(error);
