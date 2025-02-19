@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const User = require('../models/user.models');
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 dotenv.config();
 
 const login = async (req, res) => {
@@ -17,7 +17,7 @@ const login = async (req, res) => {
             return res.status(404).json({ message: 'Invalid Login Credentials' });
         }
         // console.log(password)
-        // const hashpassword = await bcrypt.hash(password,10)
+        // const hashpassword = await ypt.hash(password,10)
         // console.log(hashpassword)
 
         //const isPasswordValid = await bcrypt.compare(password, user.password);

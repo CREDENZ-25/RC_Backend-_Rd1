@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16
+    container_name: rc_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: rc_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rc-network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d rc_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+    image: rc_round1_app
+    container_name: rc_round1_app
+    ports:
+      - "3000:3000"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: rc_db
+      PGUSER: postgres
+      PGPASSWORD: 12345
+      JWT_SECRET: appachavishaylaihardae
+      JWT_EXPIRES_IN: 1h
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - rc-network
+    restart: always
+
+volumes:
+  postgres_data:
+
+networks:
+  rc-network:
