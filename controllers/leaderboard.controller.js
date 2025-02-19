@@ -63,10 +63,10 @@ const leaderBoardController = async (req, res) => {
         const is_junior = currentUser.is_junior;
 
         if (is_junior === true) {
-            juniorRank = await findUserRank(seniorLeaderBoard, currrentUserId);
+            juniorRank = await findUserRank(juniorLeaderBoard, currrentUserId);
         }
         else {
-            seniorRank = await findUserRank(juniorLeaderBoard, currrentUserId);
+            seniorRank = await findUserRank(seniorLeaderBoard, currrentUserId);
         }
         return res.status(200).json({ juniorLeaderBoard, seniorLeaderBoard, juniorRank, seniorRank, currentUser });
 

@@ -44,7 +44,11 @@ const login = async (req, res) => {
 }
 
 const logout = async(req, res) => {
-    
+  if (!req.cookies.jwt) {
+    return res.status(401).json({ message: 'Already logged out' });
+  }
+  res.cookie('jwt', '', { maxAge: 0 });
+  res.json({ message: 'Logged out successfully' });
 }
 
 module.exports = login;
