@@ -17,7 +17,7 @@ services:
     entrypoint: >
       sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot 
       --email swayamgosavi1410@gmail.com --agree-tos --no-eff-email 
-      --keep-until-expiring -d rcroundonebackend.api.credenz.co.in && echo '✅ Certbot finished successfully!'"
+      --keep-until-expiring -d rcbackendroundone.api.credenz.co.in && echo '✅ Certbot finished successfully!'"
     depends_on:
       nginx-certbot:
         condition: service_started
