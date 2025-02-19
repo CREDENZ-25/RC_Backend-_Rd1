@@ -1,0 +1,99 @@
+services:
+
+  nginx-certbot:
+    image: nginx-certbot
+    build: ./nginx-certbot
+    volumes:
+      - certbot_challenges:/var/www/certbot
+    ports:
+      - "80:80"
+
+# remove volumes and --keep-until-expiring from certbot command when want to create a new certificate and add it once certificate created (add --force-renewal instead if it presents an interactive screen)
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot_challenges:/var/www/certbot
+    entrypoint: >
+      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot 
+      --email swayamgosavi1410@gmail.com --agree-tos --no-eff-email 
+      --keep-until-expiring -d rcroundonebackend.api.credenz.co.in && echo '✅ Certbot finished successfully!'"
+    depends_on:
+      nginx-certbot:
+        condition: service_started
+  
+  shutdown-nginx-certbot:
+    image: alpine
+    depends_on:
+      certbot:
+        condition: service_completed_successfully
+    command: >
+      sh -c "echo 'Certbot finished, triggering nginx-certbot shutdown...' && 
+      sleep 2 && 
+      kill -TERM 1"
+    pid: "service:nginx-certbot"
+
+  db:
+    image: postgres:16
+    container_name: rc_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: rc_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - rc-network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d rc_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+    image: rc_round1_app
+    container_name: rc_round1_app
+    ports:
+      - "3000:3000"
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGDATABASE: rc_db
+      PGUSER: postgres
+      PGPASSWORD: 12345
+      JWT_SECRET: appachavishaylaihardae
+      JWT_EXPIRES_IN: 1h
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - rc-network
+    restart: always
+
+  nginx:
+    image: nginx-main
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot_challenges:/var/www/certbot
+    depends_on:
+      app:
+        condition: service_started
+      shutdown-nginx-certbot:
+        condition: service_completed_successfully
+    restart: always
+
+volumes:
+  postgres_data:
+  letsencrypt:
+  certbot_challenges:
+networks:
+  rc-network:
