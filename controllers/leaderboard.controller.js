@@ -1,5 +1,7 @@
 const { sequelize } = require("../config/db");
 const User = require('../models/user.models.js');
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 const getLeaderBoard = async () => {
     try {
@@ -14,7 +16,7 @@ const getLeaderBoard = async () => {
             JOIN "Users" u ON p.user_id = u.userid
             ORDER BY p.marks DESC, time_taken ASC;
         `;
-        
+
         const results = await sequelize.query(query, { type: sequelize.QueryTypes.SELECT });
 
         const juniorLeaderBoard = results.filter(user => user.is_junior === true);
@@ -38,24 +40,36 @@ const findUserRank = (leaderboard, userId) => {
 
 const leaderBoardController = async (req, res) => {
     try {
-        const currrentUserId = req.body;
+        const token = req.cookies.jwt;
         const { juniorLeaderBoard, seniorLeaderBoard } = await getLeaderBoard();
         let juniorRank = null;
         let seniorRank = null;
-        if(!currrentUserId) {
-            return res.status(200).json({ juniorLeaderBoard, seniorLeaderBoard, juniorRank, seniorRank });
+        let currrentUserId = null
+        if (!token) {
+            return res.status(200).json({ juniorLeaderBoard, seniorLeaderBoard, juniorRank, seniorRank, currentUser: null });
         }
-        const currentUser = await User.findOne({ where: { userid: currrentUserId }});
+
+        jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+            if (err) {
+                return res.status(403).json({ message: "unauthorized user" });
+            }
+
+            req.user = user;
+        });
+
+        currrentUserId = req.user.id;
+        
+        currentUser = await User.findOne({ where: { userid: currrentUserId }, attributes: { exclude: ['password', 'final_result'] } });
         const is_junior = currentUser.is_junior;
 
-        if(is_junior === true) {
-            juniorRank = await findUserRank(seniorLeaderBoard,currrentUserId);
+        if (is_junior === true) {
+            juniorRank = await findUserRank(seniorLeaderBoard, currrentUserId);
         }
-        else{
+        else {
             seniorRank = await findUserRank(juniorLeaderBoard, currrentUserId);
         }
-        return res.status(200).json({ juniorLeaderBoard, seniorLeaderBoard, juniorRank, seniorRank });
-        
+        return res.status(200).json({ juniorLeaderBoard, seniorLeaderBoard, juniorRank, seniorRank, currentUser });
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });
