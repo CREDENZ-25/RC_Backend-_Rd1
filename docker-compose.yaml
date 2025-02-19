@@ -1,0 +1,63 @@
+services:
+
+  nginx-certbot:
+    image: nginx-certbot
+    build: ./nginx-certbot
+    volumes:
+      - certbot_challenges:/var/www/certbot
+    ports:
+      - "80:80"
+
+# remove volumes and --keep-until-expiring from certbot command when want to create a new certificate and add it once certificate created (add --force-renewal instead if it presents an interactive screen)
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot_challenges:/var/www/certbot
+    entrypoint: >
+      sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot 
+      --email ashmitborawat03@gmail.com --agree-tos --no-eff-email 
+      --keep-until-expiring -d rcroundonebackend.api.credenz.co.in && echo '✅ Certbot finished successfully!'"
+    depends_on:
+      nginx-certbot:
+        condition: service_started
+  
+  shutdown-nginx-certbot:
+    image: alpine
+    depends_on:
+      certbot:
+        condition: service_completed_successfully
+    command: >
+      sh -c "echo 'Certbot finished, triggering nginx-certbot shutdown...' && 
+      sleep 2 && 
+      kill -TERM 1"
+    pid: "service:nginx-certbot"
+
+  backend:
+    image: backend
+    build: .
+    ports: 
+      - "5000:5000"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  nginx:
+    image: nginx-main
+    build: ./nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot_challenges:/var/www/certbot
+    depends_on:
+      backend:
+        condition: service_started
+      shutdown-nginx-certbot:
+        condition: service_completed_successfully
+    restart: always
+
+volumes:
+  letsencrypt:
+  certbot_challenges:
