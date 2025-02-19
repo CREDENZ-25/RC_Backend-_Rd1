@@ -51,7 +51,7 @@ const nextController = async (req, res) => {
         if (correctAnswer !== answer) {
 
             if (first_attempt === true) {
-                await Progress.update(
+                const updatedProgess = await Progress.update(
                     { marks: marks - 2, first_attempt: false },
                     { where: { user_id: currentUserId } }
                 );
@@ -59,7 +59,8 @@ const nextController = async (req, res) => {
                     where: { question_id: currentQuestionId },
                     attributes: { exclude: ['answer'] }
                 });
-                return res.status(200).json({ message: "Wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell });
+                marks = updatedProgess.marks;
+                return res.status(200).json({ message: "Wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks});
             }
 
             else if (second_attempt === true) {
@@ -79,11 +80,12 @@ const nextController = async (req, res) => {
                     where: { question_id: nextQuestionId },
                     attributes: { exclude: ['answer'] }
                 });
-                await Progress.update(
+                const updatedProgess = await Progress.update(
                     { marks: marks - 2, second_attempt: true, first_attempt: true, counter, streak: 0, skip: skipll, double: doublell, freeze: freezell },
                     { where: { user_id: currentUserId } }
                 );
-                return res.status(200).json({ message: "Wrong Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell });
+                marks = updatedProgess.marks;
+                return res.status(200).json({ message: "Wrong Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks});
             }
         }
         else {
@@ -114,11 +116,12 @@ const nextController = async (req, res) => {
                     where: { question_id: nextQuestionId },
                     attributes: { exclude: ['answer'] }
                 });
-                await Progress.update(
+                const updatedProgess = await Progress.update(
                     { marks: marks + 5, counter, correct_question_count, streak, skip: skipll, double: doublell, freeze: freezell, first_attempt: true, second_attempt: true },
                     { where: { user_id: currentUserId } }
                 );
-                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell });
+                marks = updatedProgess.marks;
+                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks });
             }
             else if (second_attempt === true) {
                 counter += 1;
@@ -147,11 +150,12 @@ const nextController = async (req, res) => {
                     where: { question_id: nextQuestionId },
                     attributes: { exclude: ['answer'] }
                 });
-                await Progress.update(
-                    { marks: marks + 5, first_attempt: true, counter, correct_question_count, streak, streak, skip: skipll, double: doublell, freeze: freezell },
+                const updatedProgess = await Progress.update(
+                    { marks: marks + 5, first_attempt: true, counter, correct_question_count, streak, streak, skip: skipll, double: doublell, freeze: freezell},
                     { where: { user_id: currentUserId } }
                 );
-                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft,doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell });
+                marks = updatedProgess.marks;
+                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft,doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks });
             }
         }
 

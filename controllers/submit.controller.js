@@ -14,7 +14,7 @@ const submitController = async (req, res) => {
         }
 
         const correctQuestionCount = currentUserProgress.correct_question_count;
-        const totalAttemptedQuestionCount = currentUserProgress.counter + 1;
+        const totalAttemptedQuestionCount = (currentUserProgress.counter == 0) ? 1: currentUserProgress.counter;
         const totalQuestionCount = currentUserProgress.question_array.length;
         const accuracy = (correctQuestionCount/totalAttemptedQuestionCount) * 100;
         const score = currentUserProgress.marks;
