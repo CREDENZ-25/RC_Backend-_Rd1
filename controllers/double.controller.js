@@ -86,7 +86,7 @@ const doubleController = async (req, res) => {
                         { marks: marks + 10, correct_question_count, streak: 0},
                         { where: { user_id: currentUserId } }
                     );
-                    return res.status(200).json({ message: "Correct Answer!", question: null, timeLeft })
+                    return res.status(204).json({ message: "Contest Ended!", question: null, timeLeft })
                 }
                 const nextQuestionId = question_array[counter];
                 const nextQuestion = await Question.findOne({

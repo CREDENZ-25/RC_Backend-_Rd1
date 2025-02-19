@@ -74,7 +74,7 @@ const nextController = async (req, res) => {
                         { marks: marks, second_attempt: true, first_attempt: true, streak: 0},
                         { where: { user_id: currentUserId } }
                     );
-                    return res.status(200).json({ message: "Questions Ended!", question: null, timeLeft })
+                    return res.status(204).json({ message: "Contest Ended!", question: null, timeLeft })
                 }
                 const nextQuestionId = question_array[counter];
                 const nextQuestion = await Question.findOne({
@@ -110,7 +110,7 @@ const nextController = async (req, res) => {
                         { marks: marks, correct_question_count, streak },
                         { where: { user_id: currentUserId } }
                     );
-                    return res.status(200).json({ message: "Questions Ended!", question: null, timeLeft })
+                    return res.status(204).json({ message: "Contest Ended!", question: null, timeLeft })
                 }
                 const nextQuestionId = question_array[counter];
                 const nextQuestion = await Question.findOne({
@@ -144,7 +144,7 @@ const nextController = async (req, res) => {
                         { marks: marks, correct_question_count, streak },
                         { where: { user_id: currentUserId } }
                     );
-                    return res.status(200).json({ message: "Question Ended!", question: null, timeLeft })
+                    return res.status(204).json({ message: "Contest Ended!", question: null, timeLeft })
                 }
                 const nextQuestionId = question_array[counter];
                 const nextQuestion = await Question.findOne({

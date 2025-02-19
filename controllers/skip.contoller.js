@@ -50,7 +50,7 @@ const skipController = async (req, res) => {
         { marks: marks, streak: 0 },
         { where: { user_id: currentUserId } }
       );
-      return res.status(200).json({ message: "Question Ended", question: null, timeLeft })
+      return res.status(204).json({ message: "Contest Ended!", question: null, timeLeft })
     }
 
     const updatedProgress = await Progress.update(
