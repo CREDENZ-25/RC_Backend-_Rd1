@@ -50,17 +50,17 @@ const nextController = async (req, res) => {
 
         if (correctAnswer !== answer) {
 
+            marks = marks - 2
             if (first_attempt === true) {
                 const updatedProgess = await Progress.update(
-                    { marks: marks - 2, first_attempt: false },
+                    { marks: marks, first_attempt: false },
                     { where: { user_id: currentUserId } }
                 );
                 const sameQuestion = await Question.findOne({
                     where: { question_id: currentQuestionId },
                     attributes: { exclude: ['answer'] }
                 });
-                marks = updatedProgess.marks;
-                return res.status(200).json({ message: "Wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks});
+                return res.status(200).json({ message: "Wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks});
             }
 
             else if (second_attempt === true) {
@@ -68,9 +68,10 @@ const nextController = async (req, res) => {
                 doublell = (doublell === false) ? null: doublell;
                 freezell = (freezell === false) ? null: freezell;
                 skipll = (skipll === false) ? null: skipll;
+                marks = marks - 2;
                 if (counter >= questionArraySize) {
                     await Progress.update(
-                        { marks: marks - 2, second_attempt: true, first_attempt: true, streak: 0, },
+                        { marks: marks, second_attempt: true, first_attempt: true, streak: 0, },
                         { where: { user_id: currentUserId } }
                     );
                     return res.status(200).json({ message: "Questions Ended!", question: null, timeLeft })
@@ -81,11 +82,10 @@ const nextController = async (req, res) => {
                     attributes: { exclude: ['answer'] }
                 });
                 const updatedProgess = await Progress.update(
-                    { marks: marks - 2, second_attempt: true, first_attempt: true, counter, streak: 0, skip: skipll, double: doublell, freeze: freezell },
+                    { marks: marks, second_attempt: true, first_attempt: true, counter, streak: 0, skip: skipll, double: doublell, freeze: freezell },
                     { where: { user_id: currentUserId } }
                 );
-                marks = updatedProgess.marks;
-                return res.status(200).json({ message: "Wrong Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks});
+                return res.status(200).json({ message: "Wrong Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks});
             }
         }
         else {
@@ -93,6 +93,7 @@ const nextController = async (req, res) => {
                 counter += 1;
                 correct_question_count += 1;
                 streak += 1;
+                marks += 5;
 
                 if (streak >= 3 && skipll === null) {
                     skipll = false;
@@ -106,7 +107,7 @@ const nextController = async (req, res) => {
 
                 if (counter >= questionArraySize) {
                     await Progress.update(
-                        { marks: marks + 5, correct_question_count, streak },
+                        { marks: marks, correct_question_count, streak },
                         { where: { user_id: currentUserId } }
                     );
                     return res.status(200).json({ message: "Questions Ended!", question: null, timeLeft })
@@ -117,16 +118,16 @@ const nextController = async (req, res) => {
                     attributes: { exclude: ['answer'] }
                 });
                 const updatedProgess = await Progress.update(
-                    { marks: marks + 5, counter, correct_question_count, streak, skip: skipll, double: doublell, freeze: freezell, first_attempt: true, second_attempt: true },
+                    { marks: marks , counter, correct_question_count, streak, skip: skipll, double: doublell, freeze: freezell, first_attempt: true, second_attempt: true },
                     { where: { user_id: currentUserId } }
                 );
-                marks = updatedProgess.marks;
                 return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks });
             }
             else if (second_attempt === true) {
                 counter += 1;
                 correct_question_count += 1
                 streak += 1;
+                marks += 5;
 
                 if (streak >= 3) {
                     skipll = false;
@@ -140,7 +141,7 @@ const nextController = async (req, res) => {
 
                 if (counter >= questionArraySize) {
                     await Progress.update(
-                        { marks: marks + 5, correct_question_count, streak },
+                        { marks: marks, correct_question_count, streak },
                         { where: { user_id: currentUserId } }
                     );
                     return res.status(200).json({ message: "Question Ended!", question: null, timeLeft })
@@ -151,10 +152,9 @@ const nextController = async (req, res) => {
                     attributes: { exclude: ['answer'] }
                 });
                 const updatedProgess = await Progress.update(
-                    { marks: marks + 5, first_attempt: true, counter, correct_question_count, streak, streak, skip: skipll, double: doublell, freeze: freezell},
+                    { marks: marks, first_attempt: true, counter, correct_question_count, streak, streak, skip: skipll, double: doublell, freeze: freezell},
                     { where: { user_id: currentUserId } }
                 );
-                marks = updatedProgess.marks;
                 return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft,doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks });
             }
         }

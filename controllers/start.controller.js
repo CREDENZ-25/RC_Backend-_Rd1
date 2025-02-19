@@ -17,7 +17,7 @@ const startController = async (req, res) => {
     }
 
     console.log("Hello")
-    
+
     const duration = 30 * 60 * 1000;
     const start_time = Date.now();
     const end_time = start_time + duration;
@@ -31,7 +31,11 @@ const startController = async (req, res) => {
       const QuestionId = existingProgress.question_array[counter];
       const existingProgressFirstQuestion = await Question.findOne({ where: { question_id: QuestionId }, attributes: { exclude: ['answer'] } });
       const timeLeft = existingProgress.end_time - Date.now();
-      return res.status(200).json({ question: existingProgressFirstQuestion, timeLeft: timeLeft });
+      const doubleStatus = existingProgress.double
+      const freezeStatus = existingProgress.freeze;
+      const skipStatus = existingProgress.skip;
+      const marks = existingProgress.marks;
+      return res.status(200).json({ question: existingProgressFirstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks});
     }
     console.log("Hello")
     const progress = await Progress.create({ user_id: currentUserId, counter: 0, start_time: start_time, end_time: end_time, question_array: shuffledQuestions });
@@ -44,7 +48,7 @@ const startController = async (req, res) => {
     const freezeStatus = progress.freeze;
     const skipStatus = progress.skip;
 
-    return res.status(200).json({ question: firstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus });
+    return res.status(200).json({ question: firstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks: 0 });
 
   } catch (error) {
     console.log(error);
