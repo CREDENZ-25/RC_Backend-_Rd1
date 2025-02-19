@@ -73,12 +73,13 @@ const doubleController = async (req, res) => {
                     where: { question_id: currentQuestionId },
                     attributes: { exclude: ['answer'] }
                 });
-                return res.status(200).json({ message: "Double Lifeline used, but wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell });
+                return res.status(200).json({ message: "Double Lifeline used, but wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak: 0 });
             }
         }
         else {
             if (first_attempt === true) {
                 counter += 1;
+                marks += 10;
                 correct_question_count += 1;
                 if (counter >= questionArraySize) {
                     await Progress.update(
@@ -96,7 +97,7 @@ const doubleController = async (req, res) => {
                     { marks: marks + 10, counter, double: true, skip: skipll, freeze: freezell, correct_question_count, streak: 0},
                     { where: { user_id: currentUserId } }
                 );
-                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell});
+                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak: 0});
             }
         }
 
