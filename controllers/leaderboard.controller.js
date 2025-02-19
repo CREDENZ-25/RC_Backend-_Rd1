@@ -1,6 +1,5 @@
 const { sequelize } = require("../config/db");
 const User = require('../models/user.models.js');
-const { findUserRank } = require('../controllers/submit.controller.js');
 
 const getLeaderBoard = async () => {
     try {
@@ -26,6 +25,15 @@ const getLeaderBoard = async () => {
         console.error("Error fetching leaderboard:", error);
         throw error;
     }
+};
+
+const findUserRank = (leaderboard, userId) => {
+    for (let i = 0; i < leaderboard.length; i++) {
+        if (leaderboard[i].user_id === userId) {
+            return i + 1;
+        }
+    }
+    return null;
 };
 
 const leaderBoardController = async (req, res) => {

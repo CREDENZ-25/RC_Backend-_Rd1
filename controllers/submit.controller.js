@@ -44,4 +44,4 @@ const findUserRank = (leaderboard, userId) => {
 };
 
 
-module.exports = { submitController, findUserRank }
+module.exports = { submitController }
