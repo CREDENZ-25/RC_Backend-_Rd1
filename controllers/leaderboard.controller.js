@@ -59,7 +59,7 @@ const leaderBoardController = async (req, res) => {
 
         currrentUserId = req.user.id;
         
-        currentUser = await User.findOne({ where: { userid: currrentUserId }, attributes: { exclude: ['password', 'final_result'] } });
+        currentUser = await User.findOne({ where: { userid: currrentUserId }, attributes: { exclude: ['password'] } });
         const is_junior = currentUser.is_junior;
 
         if (is_junior === true) {

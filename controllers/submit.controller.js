@@ -6,7 +6,7 @@ const { getLeaderBoard } = require('../controllers/leaderboard.controller.js')
 const submitController = async (req, res) => {
     const currentUserId = req.user.id;
     try {
-        const currentUser = await User.findOne({ where: { userid: currentUserId }, attributes: { exclude: ['password', 'final_result' ] } });
+        const currentUser = await User.findOne({ where: { userid: currentUserId }, attributes: { exclude: ['password'] } });
         const currentUserProgress = await Progress.findOne({ where: { user_id: currentUserId } });
 
         if (!currentUserProgress) {

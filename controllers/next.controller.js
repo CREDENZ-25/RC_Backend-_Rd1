@@ -101,7 +101,7 @@ const nextController = async (req, res) => {
                 if (streak >= 4 && freezell === null) {
                     freezell = false;
                 }
-                if (streak >= 1 && doublell === null) {
+                if (streak >= 5 && doublell === null) {
                     doublell = false;
                 }
 
@@ -129,13 +129,13 @@ const nextController = async (req, res) => {
                 streak += 1;
                 marks += 5;
 
-                if (streak >= 3) {
+                if (streak >= 3 && skipll === null) {
                     skipll = false;
                 }
-                else if (streak >= 4) {
+                if (streak >= 4 && freezell === null) {
                     freezell = false;
                 }
-                else if (streak >= 5) {
+                if (streak >= 5 && doublell === null) {
                     doublell = false;
                 }
 

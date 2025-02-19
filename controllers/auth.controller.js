@@ -5,30 +5,28 @@ const bcrypt = require("bcryptjs");
 dotenv.config();
 
 const login = async (req, res) => {
-    const { email, password } = req.body;
-    // console.log(email);
+    const { username, password } = req.body;
     try {
+
+        if(!username || !password) {
+            return res.status(404).json({ message: 'Invalid Login Credentials!' });
+        }
         const user = await User.findOne({
-            // attributes: ['password', 'userid', 'isSenior'],
-            where: { email: email },
+            where: { username: username },
         });
 
         if (!user) {
-            return res.status(404).json({ message: 'Invalid Login Credentials' });
+            return res.status(404).json({ message: 'Invalid Login Credentials!' });
         }
-        // console.log(password)
+        
         // const hashpassword = await ypt.hash(password,10)
-        // console.log(hashpassword)
-
-        //const isPasswordValid = await bcrypt.compare(password, user.password);
-        // console.log(user.password)
+        // const isPasswordValid = await bcrypt.compare(password, user.password);
 
         // if (!isPasswordValid) {
         //     return res.status(400).json({ message: 'Password is incorrect!' });
         // }
         const userDTO = {
             username : user.username,
-            name : user.name,
             id : user.userid,
             is_junior : user.is_junior
         };
@@ -51,4 +49,4 @@ const logout = async(req, res) => {
   res.json({ message: 'Logged out successfully' });
 }
 
-module.exports = login;
+module.exports = { login, logout };
