@@ -19,12 +19,13 @@ const login = async (req, res) => {
             return res.status(404).json({ message: 'Invalid Login Credentials!' });
         }
         
-        // const hashpassword = await ypt.hash(password,10)
-        // const isPasswordValid = await bcrypt.compare(password, user.password);
+        const hashpassword = await ypt.hash(password,10)
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
-        // if (!isPasswordValid) {
-        //     return res.status(400).json({ message: 'Password is incorrect!' });
-        // }
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: 'Password is incorrect!' });
+        }
+        
         const userDTO = {
             username : user.username,
             id : user.userid,
