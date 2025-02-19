@@ -13,7 +13,7 @@ const router = express.Router();
 router.get('/start', authMiddleware, startController);
 router.post('/next', authMiddleware, nextController);
 router.get('/submit', authMiddleware, submitController);
-router.get('/leaderboard', authMiddleware, leaderBoardController);
+router.get('/leaderboard', leaderBoardController);
 router.post('/double-lifeline', authMiddleware, doubleController);
 router.post('/skip-lifeline', authMiddleware, skipController);
 router.get('/increase-timer-lifeline', authMiddleware, freezeController);

@@ -1,5 +1,6 @@
 const { sequelize } = require("../config/db");
-
+const User = require('../models/user.models.js');
+const { findUserRank } = require('../controllers/submit.controller.js');
 
 const getLeaderBoard = async () => {
     try {
@@ -29,8 +30,24 @@ const getLeaderBoard = async () => {
 
 const leaderBoardController = async (req, res) => {
     try {
+        const currrentUserId = req.body;
         const { juniorLeaderBoard, seniorLeaderBoard } = await getLeaderBoard();
-        return res.status(200).json({ juniorLeaderBoard, seniorLeaderBoard });
+        let juniorRank = null;
+        let seniorRank = null;
+        if(!currrentUserId) {
+            return res.status(200).json({ juniorLeaderBoard, seniorLeaderBoard, juniorRank, seniorRank });
+        }
+        const currentUser = await User.findOne({ where: { userid: currrentUserId }});
+        const is_junior = currentUser.is_junior;
+
+        if(is_junior === true) {
+            juniorRank = await findUserRank(seniorLeaderBoard,currrentUserId);
+        }
+        else{
+            seniorRank = await findUserRank(juniorLeaderBoard, currrentUserId);
+        }
+        return res.status(200).json({ juniorLeaderBoard, seniorLeaderBoard, juniorRank, seniorRank });
+        
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Internal server error" });
