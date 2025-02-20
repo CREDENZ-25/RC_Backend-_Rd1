@@ -6,7 +6,7 @@ const { getLeaderBoard } = require('../controllers/leaderboard.controller.js')
 const submitController = async (req, res) => {
     const currentUserId = req.user.id;
     try {
-        const currentUser = await User.findOne({ where: { userid: currentUserId }, attributes: { exclude: ['password', 'final_result' ] } });
+        const currentUser = await User.findOne({ where: { userid: currentUserId }, attributes: { exclude: ['password'] } });
         const currentUserProgress = await Progress.findOne({ where: { user_id: currentUserId } });
 
         if (!currentUserProgress) {
@@ -14,7 +14,7 @@ const submitController = async (req, res) => {
         }
 
         const correctQuestionCount = currentUserProgress.correct_question_count;
-        const totalAttemptedQuestionCount = (currentUserProgress.counter == 0) ? 1: currentUserProgress.counter;
+        const totalAttemptedQuestionCount = (currentUserProgress.counter === 0) ? 1: currentUserProgress.counter;
         const totalQuestionCount = currentUserProgress.question_array.length;
         const accuracy = (correctQuestionCount/totalAttemptedQuestionCount) * 100;
         const score = currentUserProgress.marks;
@@ -25,6 +25,9 @@ const submitController = async (req, res) => {
         const leaderboard = userIsJunior ? juniorLeaderBoard : seniorLeaderBoard;
         let rank = findUserRank(leaderboard,currentUserId);
 
+        if(currentUserProgress.counter === 0) {
+            return res.status(200).json({ "message": "Submission successful", currentUser, correctQuestionCount: 0, totalAttemptedQuestionCount: 0, totalQuestionCount, accuracy: 0, score: 0, rank });
+        }
         return res.status(200).json({ "message": "Submission successful", currentUser, correctQuestionCount, totalAttemptedQuestionCount, totalQuestionCount, accuracy, score, rank });
 
     } catch (error) {

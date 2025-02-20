@@ -50,7 +50,7 @@ const skipController = async (req, res) => {
         { marks: marks, streak: 0 },
         { where: { user_id: currentUserId } }
       );
-      return res.status(200).json({ message: "Question Ended", question: null, timeLeft })
+      return res.status(200).json({ message: "🎉 You've successfully solved all the challenges", question: null, timeLeft })
     }
 
     const updatedProgress = await Progress.update(
@@ -61,7 +61,7 @@ const skipController = async (req, res) => {
     const freezeStatus = freezell;
     const nextQuestionId = questionArray[counter];
     const nextQuestion = await Question.findOne({ where: { question_id: nextQuestionId }, attributes: { exclude: ['answer'] } });
-    return res.status(200).json({ message: "Skip lifeline used successfully", nextQuestion, timeLeft, doubleStatus, skipStatus, freezeStatus });
+    return res.status(200).json({ message: "Skip lifeline used successfully", nextQuestion, timeLeft, doubleStatus, skipStatus, freezeStatus, marks: marks, streak: 0 });
 
   } catch (error) {
     console.log(error);

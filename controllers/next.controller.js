@@ -40,7 +40,7 @@ const nextController = async (req, res) => {
 
         const timeLeft = currentUserProgress.end_time - Date.now();
         if (timeLeft <= 0) {
-            return res.status(400).json({ "message": "Time Up" });
+            return res.status(200).json({ message: "🎉 You've successfully solved all the challenges", question: null, timeLeft })
         }
 
         let { counter, marks, question_array, first_attempt, second_attempt, correct_question_count, streak } = currentUserProgress;
@@ -60,7 +60,7 @@ const nextController = async (req, res) => {
                     where: { question_id: currentQuestionId },
                     attributes: { exclude: ['answer'] }
                 });
-                return res.status(200).json({ message: "Wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks});
+                return res.status(200).json({ message: "Wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak});
             }
 
             else if (second_attempt === true) {
@@ -71,10 +71,10 @@ const nextController = async (req, res) => {
                 marks = marks - 2;
                 if (counter >= questionArraySize) {
                     await Progress.update(
-                        { marks: marks, second_attempt: true, first_attempt: true, streak: 0, },
+                        { marks: marks, second_attempt: true, first_attempt: true, streak: 0},
                         { where: { user_id: currentUserId } }
                     );
-                    return res.status(200).json({ message: "Questions Ended!", question: null, timeLeft })
+                    return res.status(200).json({ message: "🎉 You've successfully solved all the challenges", question: null, timeLeft })
                 }
                 const nextQuestionId = question_array[counter];
                 const nextQuestion = await Question.findOne({
@@ -85,7 +85,7 @@ const nextController = async (req, res) => {
                     { marks: marks, second_attempt: true, first_attempt: true, counter, streak: 0, skip: skipll, double: doublell, freeze: freezell },
                     { where: { user_id: currentUserId } }
                 );
-                return res.status(200).json({ message: "Wrong Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks});
+                return res.status(200).json({ message: "Wrong Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak: 0});
             }
         }
         else {
@@ -101,7 +101,7 @@ const nextController = async (req, res) => {
                 if (streak >= 4 && freezell === null) {
                     freezell = false;
                 }
-                if (streak >= 1 && doublell === null) {
+                if (streak >= 5 && doublell === null) {
                     doublell = false;
                 }
 
@@ -110,7 +110,7 @@ const nextController = async (req, res) => {
                         { marks: marks, correct_question_count, streak },
                         { where: { user_id: currentUserId } }
                     );
-                    return res.status(200).json({ message: "Questions Ended!", question: null, timeLeft })
+                    return res.status(200).json({ message: "🎉 You've successfully solved all the challenges", question: null, timeLeft })
                 }
                 const nextQuestionId = question_array[counter];
                 const nextQuestion = await Question.findOne({
@@ -121,7 +121,7 @@ const nextController = async (req, res) => {
                     { marks: marks , counter, correct_question_count, streak, skip: skipll, double: doublell, freeze: freezell, first_attempt: true, second_attempt: true },
                     { where: { user_id: currentUserId } }
                 );
-                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks });
+                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks, streak });
             }
             else if (second_attempt === true) {
                 counter += 1;
@@ -129,13 +129,13 @@ const nextController = async (req, res) => {
                 streak += 1;
                 marks += 5;
 
-                if (streak >= 3) {
+                if (streak >= 3 && skipll === null) {
                     skipll = false;
                 }
-                else if (streak >= 4) {
+                if (streak >= 4 && freezell === null) {
                     freezell = false;
                 }
-                else if (streak >= 5) {
+                if (streak >= 5 && doublell === null) {
                     doublell = false;
                 }
 
@@ -144,7 +144,7 @@ const nextController = async (req, res) => {
                         { marks: marks, correct_question_count, streak },
                         { where: { user_id: currentUserId } }
                     );
-                    return res.status(200).json({ message: "Question Ended!", question: null, timeLeft })
+                    return res.status(200).json({ message: "🎉 You've successfully solved all the challenges", question: null, timeLeft })
                 }
                 const nextQuestionId = question_array[counter];
                 const nextQuestion = await Question.findOne({
@@ -155,7 +155,7 @@ const nextController = async (req, res) => {
                     { marks: marks, first_attempt: true, counter, correct_question_count, streak, streak, skip: skipll, double: doublell, freeze: freezell},
                     { where: { user_id: currentUserId } }
                 );
-                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft,doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks });
+                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft,doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks: marks, streak });
             }
         }
 

@@ -24,7 +24,6 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  
   is_junior: {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
