@@ -16,8 +16,8 @@ services:
       - certbot_challenges:/var/www/certbot
     entrypoint: >
       sh -c "certbot certonly --webroot --webroot-path=/var/www/certbot 
-      --email swayamgosavi1410@gmail.com --agree-tos --no-eff-email 
-      --keep-until-expiring -d rcbackendroundone.api.credenz.co.in && echo '✅ Certbot finished successfully!'"
+      --email avadg252@gmail.com --agree-tos --no-eff-email 
+      --keep-until-expiring -d rconebackend.api.credenz.co.in && echo '✅ Certbot finished successfully!'"
     depends_on:
       nginx-certbot:
         condition: service_started
@@ -51,13 +51,11 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
-    build:
-      context: .
-    image: rc_round1_app
-    container_name: rc_round1_app
+  backend:
+    image: backend
+    build: .
     ports:
-      - "3000:3000"
+      - "5000:5000"
     environment:
       PGHOST: db
       PGPORT: 5432
@@ -69,7 +67,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    restart: always
+    restart: unless-stopped
 
   nginx:
     image: nginx-main
@@ -81,7 +79,7 @@ services:
       - letsencrypt:/etc/letsencrypt
       - certbot_challenges:/var/www/certbot
     depends_on:
-      app:
+      backend:
         condition: service_started
       shutdown-nginx-certbot:
         condition: service_completed_successfully

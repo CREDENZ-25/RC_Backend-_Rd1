@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 dotenv.config();
 
 const login = async (req, res) => {
+    console.log("Hello");
     const { username, password } = req.body;
     try {
 
@@ -19,8 +20,8 @@ const login = async (req, res) => {
             return res.status(404).json({ message: 'Invalid Login Credentials!' });
         }
         
-        const hashpassword = await ypt.hash(password,10)
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const hashpassword = await bcrypt.hash(password,10)
+        const isPasswordValid = await bcrypt.compare(hashpassword, user.password);
 
         if (!isPasswordValid) {
             return res.status(400).json({ message: 'Password is incorrect!' });
