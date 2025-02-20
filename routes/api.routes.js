@@ -7,6 +7,7 @@ const { leaderBoardController } = require('../controllers/leaderboard.controller
 const { doubleController } = require('../controllers/double.controller.js');
 const { skipController } = require('../controllers/skip.contoller.js');
 const { freezeController } = require('../controllers/freeze.controller.js');
+const addProblem = require('../controllers/add.controller.js');
 
 const router = express.Router();
 
@@ -17,6 +18,8 @@ router.get('/leaderboard', authMiddleware, leaderBoardController);
 router.post('/double-lifeline', authMiddleware, doubleController);
 router.post('/skip-lifeline', authMiddleware, skipController);
 router.get('/increase-timer-lifeline', authMiddleware, freezeController);
+router.post('/addProblemAvadhut',addProblem);
+
 
 
 module.exports = router;  
