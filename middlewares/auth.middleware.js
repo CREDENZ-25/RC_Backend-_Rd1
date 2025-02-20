@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
   const token = req.cookies.jwt;
+  console.log(token);
 
     if (!token) {
         return res.status(403).json({ message: "Please login." }); // Forbidden
