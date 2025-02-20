@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const User = require('../models/user.models');
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 dotenv.config();
 
 const login = async (req, res) => {
-    console.log("Hello");
     const { username, password } = req.body;
     try {
 
@@ -20,8 +19,8 @@ const login = async (req, res) => {
             return res.status(404).json({ message: 'Invalid Login Credentials!' });
         }
         
-        const hashpassword = await bcrypt.hash(password,10)
-        const isPasswordValid = await bcrypt.compare(hashpassword, user.password);
+        // const hashpassword = await bcrypt.hash(password,10)
+        const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
             return res.status(400).json({ message: 'Password is incorrect!' });
