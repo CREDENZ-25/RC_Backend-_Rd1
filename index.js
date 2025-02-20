@@ -30,7 +30,7 @@ app.use(cookieParser());
 router.get('/protected/start', authMiddleware, startLimiter, startController);
 router.post('/protected/next', authMiddleware, startLimiter, nextController);
 
-app.use('/', authRoutes);
+app.use('/auth', authRoutes);
 app.use('/api', apiRoutes);
 
 app.get('/', (req, res) => {
