@@ -15,6 +15,7 @@ const freezeController = async (req, res) => {
     let skipll = currentUserProgress.skip;
     let freezell = currentUserProgress.freeze;
     let marks = currentUserProgress.marks;
+    const currentCounter = currentUserProgress.counter;
 
     if (!currentUserProgress.first_attempt) {
       return res.status(400).json({ message: "Cannot use lifelines after attempting the question once" });
@@ -41,7 +42,7 @@ const freezeController = async (req, res) => {
     const skipStatus = skipll;
     const freezeStatus = true;
 
-    return res.status(200).json({ message: "Time increases by 2 minutes", timeLeft: timeLeft, doubleStatus, skipStatus, freezeStatus, streak: 0 });
+    return res.status(200).json({ message: "Time increases by 2 minutes", timeLeft: timeLeft, doubleStatus, skipStatus, freezeStatus, streak: 0, counter: currentCounter});
 
   } catch (error) {
     console.log(error);

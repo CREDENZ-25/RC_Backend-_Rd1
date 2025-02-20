@@ -32,7 +32,7 @@ const startController = async (req, res) => {
       const skipStatus = existingProgress.skip;
       const marks = existingProgress.marks;
       const streak = existingProgress.streak;
-      return res.status(200).json({ question: existingProgressFirstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks, streak});
+      return res.status(200).json({ question: existingProgressFirstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks, streak, counter});
     }
 
     const progress = await Progress.create({ user_id: currentUserId, counter: 0, start_time: start_time, end_time: end_time, question_array: shuffledQuestions });
@@ -45,7 +45,7 @@ const startController = async (req, res) => {
     const freezeStatus = progress.freeze;
     const skipStatus = progress.skip;
 
-    return res.status(200).json({ question: firstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks: 0, streak: 0});
+    return res.status(200).json({ question: firstQuestion, timeLeft: timeLeft, doubleStatus, freezeStatus, skipStatus, marks: 0, streak: 0, counter: 0});
 
   } catch (error) {
     console.log(error);

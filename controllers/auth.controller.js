@@ -6,8 +6,9 @@ dotenv.config();
 
 const login = async (req, res) => {
     const { username, password } = req.body;
+    console.log("called");
+    console.log("cred", username, password);
     try {
-
         if(!username || !password) {
             return res.status(404).json({ message: 'Invalid Login Credentials!' });
         }

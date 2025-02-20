@@ -73,7 +73,7 @@ const doubleController = async (req, res) => {
                     where: { question_id: currentQuestionId },
                     attributes: { exclude: ['answer'] }
                 });
-                return res.status(200).json({ message: "Double Lifeline used, but wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak: 0 });
+                return res.status(200).json({ message: "Double Lifeline used, but wrong Answer!", question: sameQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak: 0, counter: currentCounter });
             }
         }
         else {
@@ -97,7 +97,7 @@ const doubleController = async (req, res) => {
                     { marks: marks + 10, counter, double: true, skip: skipll, freeze: freezell, correct_question_count, streak: 0},
                     { where: { user_id: currentUserId } }
                 );
-                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak: 0});
+                return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak: 0, counter });
             }
         }
 
