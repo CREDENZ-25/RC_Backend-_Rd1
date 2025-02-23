@@ -10,7 +10,9 @@ require('dotenv').config();
 const app = express();
 const allowedOrigins = ['*'];
 const corsOptions = {
-  origin: 'https://rc.credenz.co.in', // Replace with your frontend URL
+  origin: (origin, callback) => {
+    callback(null, true);  // Allow all origins
+  },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
     'Content-Type',
@@ -21,14 +23,13 @@ const corsOptions = {
     'X-CSRF-Token'
   ],
   exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  credentials: true,
+  credentials: true,  // Allow credentials (cookies, authorization headers, etc.)
   maxAge: 86400,
   preflightContinue: false,
   optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

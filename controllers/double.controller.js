@@ -83,7 +83,7 @@ const doubleController = async (req, res) => {
                 correct_question_count += 1;
                 if (counter >= questionArraySize) {
                     await Progress.update(
-                        { marks: marks + 10, correct_question_count, streak: 0},
+                        { marks: marks, correct_question_count, streak: 0},
                         { where: { user_id: currentUserId } }
                     );
                     return res.status(200).json({ message: "🎉 You've successfully solved all the challenges", question: null, timeLeft })
@@ -94,7 +94,7 @@ const doubleController = async (req, res) => {
                     attributes: { exclude: ['answer'] }
                 });
                 await Progress.update(
-                    { marks: marks + 10, counter, double: true, skip: skipll, freeze: freezell, correct_question_count, streak: 0},
+                    { marks: marks, counter, double: true, skip: skipll, freeze: freezell, correct_question_count, streak: 0},
                     { where: { user_id: currentUserId } }
                 );
                 return res.status(200).json({ message: "Correct Answer!", question: nextQuestion, timeLeft, doubleStatus: doublell, skipStatus: skipll, freezeStatus: freezell, marks, streak: 0, counter });

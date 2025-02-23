@@ -50,8 +50,8 @@ const nextController = async (req, res) => {
 
         if (correctAnswer !== answer) {
 
-            marks = marks - 2
             if (first_attempt === true) {
+                marks = marks - 2
                 const updatedProgess = await Progress.update(
                     { marks: marks, first_attempt: false },
                     { where: { user_id: currentUserId } }
@@ -69,6 +69,7 @@ const nextController = async (req, res) => {
                 freezell = (freezell === false) ? null: freezell;
                 skipll = (skipll === false) ? null: skipll;
                 marks = marks - 2;
+                
                 if (counter >= questionArraySize) {
                     await Progress.update(
                         { marks: marks, second_attempt: true, first_attempt: true, streak: 0},
